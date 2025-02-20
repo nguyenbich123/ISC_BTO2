@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AuthorizationAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e9ce4b0a0e482ba1c81c7424e1026df6403ca2de")]
 [assembly: System.Reflection.AssemblyProductAttribute("AuthorizationAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AuthorizationAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
