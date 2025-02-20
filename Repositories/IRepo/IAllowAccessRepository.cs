@@ -6,10 +6,11 @@ namespace AuthorizationAPI.Repositories.IRepo
 {
     public interface IAllowAccessRepository
     {
-        Task<IEnumerable<AllowAccess>> GetAllAllowAccessAsync();
-        Task<AllowAccess?> GetAllowAccessByRoleIdAsync(int roleId);
-        Task AddAllowAccessAsync(AllowAccess allowAccess);
-        Task UpdateAllowAccessAsync(AllowAccess allowAccess);
+        Task<ICollection<AllowAccess>> GetAllAllowAccessAsync();
+        Task<AllowAccess> GetAllowAccessByRoleIdAsync(int roleId, string table);
+        Task<AllowAccess> GetAllowAccessByIdAsync(int roleId);
+        Task<AllowAccess> AddAllowAccessAsync(AllowAccess allowAccess);
+        Task<AllowAccess> UpdateAllowAccessAsync(AllowAccess allowAccess);
         Task DeleteAllowAccessAsync(int roleId);
     }
 }

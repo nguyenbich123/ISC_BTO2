@@ -55,4 +55,5 @@ D:\ISC\Bài tập onl\AuthorizationAPI\bin\Debug\net6.0\BCrypt.Net-Next.dll
 D:\ISC\Bài tập onl\AuthorizationAPI\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\ISC\Bài tập onl\AuthorizationAPI\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.dll
 D:\ISC\Bài tập onl\AuthorizationAPI\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\ISC\Bài tập onl\AuthorizationAPI\obj\Debug\net6.0\AuthorizationAPI.sourcelink.json
 D:\ISC\Bài tập onl\AuthorizationAPI\obj\Debug\net6.0\staticwebassets.upToDateCheck.txt

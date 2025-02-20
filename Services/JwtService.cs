@@ -20,14 +20,15 @@ namespace AuthorizationAPI.Services
             _audience = configuration["JwtSettings:Audience"];
         }
 
-        public string GenerateToken(string userId, string role)
+        public string GenerateToken(string userId, string role, string roleId)
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userId),
-                new Claim(ClaimTypes.Role, role),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Token ID
-            };
+        new Claim(JwtRegisteredClaimNames.Sub, userId),
+        new Claim(ClaimTypes.Role, role),
+        new Claim("RoleId", roleId), // Thêm RoleId vào token
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Token ID
+    };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -42,5 +43,6 @@ namespace AuthorizationAPI.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

@@ -16,26 +16,28 @@ namespace AuthorizationAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<ICollection<User>> GetAllUsersAsync()
         {
             return await _context.Users.Include(u => u.Role).ToListAsync();
         }
 
-        public async Task<User?> GetUserByIdAsync(int id)
+        public async Task<User> GetUserByIdAsync(int id)
         {
             return await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.UserId == id);
         }
 
-        public async Task AddUserAsync(User user)
+        public async Task<User> AddUserAsync(User user)
         {
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
+            return user; // 🔹 Trả về user vừa thêm
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task<User> UpdateUserAsync(User user)
         {
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
+            return user; // 🔹 Trả về user vừa cập nhật
         }
 
         public async Task DeleteUserAsync(int id)
@@ -48,10 +50,13 @@ namespace AuthorizationAPI.Repositories
             }
         }
 
-        public async Task<User?> GetUserByUsernameAsync(string username)
+        public async Task<User> GetUserByUsernameAsync(string username)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
+            return await _context.Users
+                .Include(u => u.Role)  // Nạp Role vào User
+                .FirstOrDefaultAsync(u => u.UserName == username);
         }
+
 
     }
 }

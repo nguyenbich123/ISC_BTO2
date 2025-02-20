@@ -33,6 +33,18 @@
         public string? LinkProduct { get; set; }
         public string? JobFields { get; set; }
         public bool? HiddenToEnterprise { get; set; }
+
+
+
+        public object FilterColumns(List<string> allowedColumns)
+        {
+            var properties = typeof(Intern).GetProperties()
+                .Where(prop => allowedColumns.Contains(prop.Name))
+                .ToDictionary(prop => prop.Name, prop => prop.GetValue(this));
+
+            return properties;
+        }
     }
+
 
 }

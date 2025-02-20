@@ -16,26 +16,28 @@ namespace AuthorizationAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Role>> GetAllRolesAsync()
+        public async Task<ICollection<Role>> GetAllRolesAsync()
         {
             return await _context.Roles.ToListAsync();
         }
 
-        public async Task<Role?> GetRoleByIdAsync(int id)
+        public async Task<Role> GetRoleByIdAsync(int id)
         {
             return await _context.Roles.FindAsync(id);
         }
 
-        public async Task AddRoleAsync(Role role)
+        public async Task<Role> AddRoleAsync(Role role)
         {
             await _context.Roles.AddAsync(role);
             await _context.SaveChangesAsync();
+            return role;
         }
 
-        public async Task UpdateRoleAsync(Role role)
+        public async Task<Role> UpdateRoleAsync(Role role)
         {
             _context.Roles.Update(role);
             await _context.SaveChangesAsync();
+            return role;
         }
 
         public async Task DeleteRoleAsync(int id)

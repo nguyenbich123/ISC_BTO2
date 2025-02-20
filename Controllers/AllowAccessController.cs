@@ -1,5 +1,7 @@
-﻿using AuthorizationAPI.Models;
+﻿using AuthorizationAPI.DTOs.Request;
+using AuthorizationAPI.Models;
 using AuthorizationAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -17,39 +19,43 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllAllowAccess()
         {
-            var allowAccessList = await _allowAccessService.GetAllAllowAccessAsync();
-            return Ok(allowAccessList);
+            var response = await _allowAccessService.GetAllAllowAccessAsync();
+            return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
         }
 
         [HttpGet("{roleId}")]
+        [Authorize]
         public async Task<IActionResult> GetAllowAccessByRoleId(int roleId)
         {
-            var allowAccess = await _allowAccessService.GetAllowAccessByRoleIdAsync(roleId);
-            return allowAccess != null ? Ok(allowAccess) : NotFound();
+            var response = await _allowAccessService.GetAllowAccessByRoleIdAsync(roleId);
+            return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAllowAccess([FromBody] AllowAccess allowAccess)
+        [Authorize]
+        public async Task<IActionResult> AddAllowAccess([FromBody] AllowAccessRequest allowAccess)
         {
-            await _allowAccessService.AddAllowAccessAsync(allowAccess);
-            return CreatedAtAction(nameof(GetAllowAccessByRoleId), new { roleId = allowAccess.RoleId }, allowAccess);
+            var response =  await _allowAccessService.AddAllowAccessAsync(allowAccess);
+            return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
         }
 
         [HttpPut("{roleId}")]
-        public async Task<IActionResult> UpdateAllowAccess(int roleId, [FromBody] AllowAccess allowAccess)
+        [Authorize]
+        public async Task<IActionResult> UpdateAllowAccess(int roleId, [FromBody] AllowAccessRequest allowAccess)
         {
-            if (roleId != allowAccess.RoleId) return BadRequest();
-            await _allowAccessService.UpdateAllowAccessAsync(allowAccess);
-            return NoContent();
+            var response =  await _allowAccessService.UpdateAllowAccessAsync(roleId, allowAccess);
+            return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
         }
 
-        [HttpDelete("{roleId}")]
-        public async Task<IActionResult> DeleteAllowAccess(int roleId)
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteAllowAccess(int id)
         {
-            await _allowAccessService.DeleteAllowAccessAsync(roleId);
-            return NoContent();
+            var response =  await _allowAccessService.DeleteAllowAccessAsync(id);
+            return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
         }
     }
 }

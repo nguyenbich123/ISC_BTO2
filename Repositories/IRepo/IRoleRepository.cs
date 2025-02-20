@@ -6,10 +6,10 @@ namespace AuthorizationAPI.Repositories.IRepo
 {
     public interface IRoleRepository
     {
-        Task<Role?> GetRoleByIdAsync(int id);
-        Task<IEnumerable<Role>> GetAllRolesAsync();
-        Task AddRoleAsync(Role role);
-        Task UpdateRoleAsync(Role role);
+        Task<Role> GetRoleByIdAsync(int id);
+        Task<ICollection<Role>> GetAllRolesAsync();
+        Task<Role> AddRoleAsync(Role role);
+        Task<Role> UpdateRoleAsync(Role role);
         Task DeleteRoleAsync(int id);
     }
 }

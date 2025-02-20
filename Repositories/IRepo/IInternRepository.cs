@@ -6,6 +6,6 @@ namespace AuthorizationAPI.Repositories.IRepo
 {
     public interface IInternRepository
     {
-        Task<IEnumerable<Intern>> GetInternsByRoleAsync(int roleId);
+        Task<ICollection<object>> GetInternsByRoleAsync(int roleId);
     }
 }

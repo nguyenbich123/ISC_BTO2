@@ -16,26 +16,33 @@ namespace AuthorizationAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<AllowAccess>> GetAllAllowAccessAsync()
+        public async Task<ICollection<AllowAccess>> GetAllAllowAccessAsync()
         {
             return await _context.AllowAccesses.ToListAsync();
         }
 
-        public async Task<AllowAccess?> GetAllowAccessByRoleIdAsync(int roleId)
+        public async Task<AllowAccess> GetAllowAccessByRoleIdAsync(int roleId, string tableName)
         {
-            return await _context.AllowAccesses.FirstOrDefaultAsync(a => a.RoleId == roleId);
+            return await _context.AllowAccesses.FirstOrDefaultAsync(a => a.RoleId == roleId && a.TableName == tableName);
         }
 
-        public async Task AddAllowAccessAsync(AllowAccess allowAccess)
+        public async Task<AllowAccess> GetAllowAccessByIdAsync(int id)
+        {
+            return await _context.AllowAccesses.FirstOrDefaultAsync(a => a.Id == id);
+        }
+
+        public async Task<AllowAccess> AddAllowAccessAsync(AllowAccess allowAccess)
         {
             await _context.AllowAccesses.AddAsync(allowAccess);
             await _context.SaveChangesAsync();
+            return allowAccess;
         }
 
-        public async Task UpdateAllowAccessAsync(AllowAccess allowAccess)
+        public async Task<AllowAccess> UpdateAllowAccessAsync(AllowAccess allowAccess)
         {
             _context.AllowAccesses.Update(allowAccess);
             await _context.SaveChangesAsync();
+            return allowAccess;
         }
 
         public async Task DeleteAllowAccessAsync(int roleId)
@@ -47,5 +54,6 @@ namespace AuthorizationAPI.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
     }
 }

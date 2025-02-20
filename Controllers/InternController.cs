@@ -17,12 +17,31 @@ namespace AuthorizationAPI.Controllers
             _internService = internService;
         }
 
+        //[HttpGet]
+        //[Authorize]
+        //public async Task<IActionResult> GetInterns()
+        //{
+        //    var roleId = int.Parse(User.FindFirst("RoleId")?.Value ?? "0");
+        //    var response = await _internService.GetInternsByRoleAsync(roleId);
+        //    return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
+
+        //}
+        [Authorize] // Bắt buộc người dùng phải đăng nhập mới gọi API này
         [HttpGet]
         public async Task<IActionResult> GetInterns()
         {
-            var roleId = int.Parse(User.FindFirst("RoleId")?.Value ?? "0");
-            var interns = await _internService.GetInternsByRoleAsync(roleId);
-            return Ok(interns);
+            var roleIdClaim = User.FindFirst("RoleId");
+
+            if (roleIdClaim == null)
+            {
+                return Unauthorized(new { status = "error", message = "Không tìm thấy RoleId trong token" });
+            }
+
+            int roleId = int.Parse(roleIdClaim.Value);
+            var response = await _internService.GetInternsByRoleAsync(roleId);
+
+            return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
         }
+
     }
 }

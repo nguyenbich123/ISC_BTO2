@@ -1,4 +1,5 @@
-﻿using AuthorizationAPI.Models;
+﻿using AuthorizationAPI.DTOs.Request;
+using AuthorizationAPI.Models;
 using AuthorizationAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,11 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")] // Chỉ Admin mới có quyền lấy danh sách user
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _userService.GetAllUsersAsync();
-            return Ok(users);
+            return users.Status.Equals("success")? Ok(users) : BadRequest(users);
         }
 
         [HttpGet("{id}")]
@@ -30,41 +31,30 @@ namespace AuthorizationAPI.Controllers
         public async Task<IActionResult> GetUserById(int id)
         {
             var user = await _userService.GetUserByIdAsync(id);
-            return user != null ? Ok(user) : NotFound();
+            return user.Status.Equals("success") ? Ok(user) : BadRequest(user);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUser([FromBody] User user)
+        public async Task<IActionResult> AddUser([FromBody] UserRequest user)
         {
-            await _userService.AddUserAsync(user);
-            return CreatedAtAction(nameof(GetUserById), new { id = user.UserId }, user);
+            var response = await _userService.AddUserAsync(user);
+            return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
         }
 
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] User user)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserRequest userRequest)
         {
-            if (id != user.UserId) return BadRequest();
-            await _userService.UpdateUserAsync(user);
-            return NoContent();
+            var response = await _userService.UpdateUserAsync(id, userRequest);
+            return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            await _userService.DeleteUserAsync(id);
-            return NoContent();
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
-        {
-            var token = await _userService.AuthenticateUserAsync(loginRequest.Username, loginRequest.Password);
-            if (token == null)
-                return Unauthorized(new { message = "Invalid username or password" });
-
-            return Ok(new { token });
+            var response = await _userService.DeleteUserAsync(id);
+            return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
         }
     }
 }

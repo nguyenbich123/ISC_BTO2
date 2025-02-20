@@ -1,4 +1,5 @@
-﻿using AuthorizationAPI.Models;
+﻿using AuthorizationAPI.DTOs.Request;
+using AuthorizationAPI.Models;
 using AuthorizationAPI.Repositories;
 using AuthorizationAPI.Repositories.IRepo;
 using Microsoft.AspNetCore.Identity;
@@ -23,34 +24,93 @@ namespace AuthorizationAPI.Services
             _configuration = configuration;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<ApiResponse<ICollection<User>>> GetAllUsersAsync()
         {
-            return await _userRepository.GetAllUsersAsync();
+            var users = await _userRepository.GetAllUsersAsync();
+            return new ApiResponse<ICollection<User>>("success", "Lấy người dùng thành công", users);
         }
 
-        public async Task<User?> GetUserByIdAsync(int id)
-        {
-            return await _userRepository.GetUserByIdAsync(id);
-        }
 
-        public async Task AddUserAsync(User user)
+        public async Task<ApiResponse<User>> GetUserByIdAsync(int id)
         {
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash); // Hash password
-            await _userRepository.AddUserAsync(user);
-        }
+            var user = await _userRepository.GetUserByIdAsync(id);
 
-        public async Task UpdateUserAsync(User user)
-        {
-            if (!string.IsNullOrEmpty(user.PasswordHash))
+            if (user == null)
             {
-                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash); // Hash password
+                return new ApiResponse<User?>("error", "Không tìm thấy người dùng",null);
             }
-            await _userRepository.UpdateUserAsync(user);
+
+            return new ApiResponse<User?>( "success",  "Lấy người dùng thành công",  user);
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task<ApiResponse<User>> AddUserAsync(UserRequest request)
         {
+            try
+            {
+                var newUser = new User
+                {
+                    UserName = request.UserName,
+                    FullName = request.FullName,
+                    DateOfBirth = request.DateOfBirth,
+                    Email = request.Email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                    RoleId = request.RoleId
+                };
+                var user = await _userRepository.AddUserAsync(newUser);
+                return new ApiResponse<User>("success",  "Thêm người dùng thành công",user);
+            }
+            catch (Exception ex) 
+            {
+                return new ApiResponse<User>( "error","Lỗi thêm người dùng",null);
+            }
+        }
+
+        public async Task<ApiResponse<User>> UpdateUserAsync(int id, UserRequest request)
+        {
+            try
+            {
+                var existUser = await _userRepository.GetUserByIdAsync(id);
+                if (existUser == null)
+                {
+                    return new ApiResponse<User>("error", "Không tìm thấy người dùng", null);
+                }
+
+                if (!string.IsNullOrEmpty(request.Password))
+                {
+                    request.Password = BCrypt.Net.BCrypt.HashPassword(request.Password); // Hash password
+                    existUser.UserName = request.UserName;
+                }
+
+                existUser.FullName = request.FullName;
+                existUser.DateOfBirth = request.DateOfBirth;
+                existUser.Email = request.Email;
+                existUser.RoleId = request.RoleId;
+                var updateUser = await _userRepository.UpdateUserAsync(existUser);
+                   
+                return new ApiResponse<User>("success", "Cập nhật người dùng thành công", updateUser);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<User>("error", "Lỗi cập nhật người dùng", null);
+            }
+            
+        }
+
+        public async Task<ApiResponse<User>> DeleteUserAsync(int id)
+        {
+            try{
+                var existUser = await _userRepository.GetUserByIdAsync(id);
+            if (existUser == null)
+            {
+                return new ApiResponse<User>("error", "Không tìm thấy người dùng", null);
+            }
             await _userRepository.DeleteUserAsync(id);
+            return new ApiResponse<User>("success", "Xóa người dùng thành công", null);
+            }catch (Exception ex)
+            {
+                return new ApiResponse<User>("error", "Lỗi xóa người dùng", null);
+            }
+            
         }
 
         public async Task<string?> AuthenticateUserAsync(string username, string password)

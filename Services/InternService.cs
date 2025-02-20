@@ -2,6 +2,7 @@
 using AuthorizationAPI.Repositories;
 using AuthorizationAPI.Repositories.IRepo;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace AuthorizationAPI.Services
@@ -15,9 +16,11 @@ namespace AuthorizationAPI.Services
             _internRepository = internRepository;
         }
 
-        public async Task<IEnumerable<Intern>> GetInternsByRoleAsync(int roleId)
+        public async Task<ApiResponse<ICollection<object>>> GetInternsByRoleAsync(int roleId)
         {
-            return await _internRepository.GetInternsByRoleAsync(roleId);
+            Console.WriteLine("id nè:" + roleId);
+            var intern  = await _internRepository.GetInternsByRoleAsync(roleId);
+            return new ApiResponse<ICollection<object>>("success", "Lấy danh sách thực tập sinh thành công", intern);
         }
     }
 }
