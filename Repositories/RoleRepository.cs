@@ -3,6 +3,7 @@ using AuthorizationAPI.Models;
 using AuthorizationAPI.Repositories.IRepo;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace AuthorizationAPI.Repositories
@@ -48,6 +49,11 @@ namespace AuthorizationAPI.Repositories
                 _context.Roles.Remove(role);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<Role, bool>> predicate)
+        {
+            return await _context.Roles.AnyAsync(predicate);
         }
     }
 }

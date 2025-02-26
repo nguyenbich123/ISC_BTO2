@@ -17,12 +17,16 @@ namespace AuthorizationAPI.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
+        
+        private readonly IRoleRepository _roleRepository;
 
-        public UserService(IUserRepository userRepository, IConfiguration configuration)
+        public UserService(IUserRepository userRepository, IRoleRepository roleRepository, IConfiguration configuration)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
             _configuration = configuration;
         }
+
 
         public async Task<ApiResponse<ICollection<User>>> GetAllUsersAsync()
         {
@@ -47,6 +51,31 @@ namespace AuthorizationAPI.Services
         {
             try
             {
+                // Kiểm tra UserName có bị trùng với user khác không
+                if (await _userRepository.AnyAsync(u => u.UserName == request.UserName))
+                {
+                    return new ApiResponse<User>("error", "UserName đã tồn tại", null);
+                }
+
+                // Kiểm tra Email có bị trùng với user khác không
+                if (await _userRepository.AnyAsync(u => u.Email == request.Email))
+                {
+                    return new ApiResponse<User>("error", "Email đã tồn tại", null);
+                }
+
+                // Kiểm tra Role có tồn tại không
+                if (request.RoleId != null)
+                {
+                    var roleExists = await _roleRepository.GetRoleByIdAsync(request.RoleId);
+                    if (roleExists == null)
+                    {
+                        return new ApiResponse<User>("error", "Role không tồn tại", null);
+                    }
+                }
+
+
+
+
                 var newUser = new User
                 {
                     UserName = request.UserName,
@@ -75,25 +104,50 @@ namespace AuthorizationAPI.Services
                     return new ApiResponse<User>("error", "Không tìm thấy người dùng", null);
                 }
 
-                if (!string.IsNullOrEmpty(request.Password))
+                // Kiểm tra UserName có bị trùng với user khác không
+                if (await _userRepository.AnyAsync(u => u.UserName == request.UserName && u.UserId != id))
                 {
-                    request.Password = BCrypt.Net.BCrypt.HashPassword(request.Password); 
-                    existUser.UserName = request.UserName;
+                    return new ApiResponse<User>("error", "UserName đã tồn tại", null);
                 }
 
+                // Kiểm tra Email có bị trùng với user khác không
+                if (await _userRepository.AnyAsync(u => u.Email == request.Email && u.UserId != id))
+                {
+                    return new ApiResponse<User>("error", "Email đã tồn tại", null);
+                }
+
+                // Kiểm tra Role có tồn tại không
+                if (request.RoleId != null)
+                {
+                    var roleExists = await _roleRepository.GetRoleByIdAsync(request.RoleId);
+                    if (roleExists == null)
+                    {
+                        return new ApiResponse<User>("error", "Role không tồn tại", null);
+                    }
+                }
+
+                // Cập nhật thông tin user
+                existUser.UserName = request.UserName;
                 existUser.FullName = request.FullName;
                 existUser.DateOfBirth = request.DateOfBirth;
                 existUser.Email = request.Email;
                 existUser.RoleId = request.RoleId;
+
+                // Cập nhật mật khẩu nếu có
+                if (!string.IsNullOrEmpty(request.Password))
+                {
+                    existUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password);
+                }
+
                 var updateUser = await _userRepository.UpdateUserAsync(existUser);
-                   
                 return new ApiResponse<User>("success", "Cập nhật người dùng thành công", updateUser);
             }
             catch (Exception ex)
             {
                 return new ApiResponse<User>("error", "Lỗi cập nhật người dùng", null);
-            }  
+            }
         }
+
 
         public async Task<ApiResponse<User>> DeleteUserAsync(int id)
         {

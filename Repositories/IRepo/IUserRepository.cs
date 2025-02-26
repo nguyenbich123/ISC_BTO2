@@ -1,4 +1,5 @@
-﻿using AuthorizationAPI.Models;
+﻿using System.Linq.Expressions;
+using AuthorizationAPI.Models;
 
 namespace AuthorizationAPI.Repositories.IRepo
 {
@@ -10,6 +11,7 @@ namespace AuthorizationAPI.Repositories.IRepo
         Task<User> UpdateUserAsync(User user);
         Task DeleteUserAsync(int id);
         Task<User> GetUserByUsernameAsync(string username);
+        Task<bool> AnyAsync(Expression<Func<User, bool>> predicate);
 
     }
 }

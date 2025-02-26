@@ -38,6 +38,10 @@ namespace AuthorizationAPI.Services
         {
             try
             {
+                if (await _roleRepository.AnyAsync(u => u.RoleName == request.Name))
+                {
+                    return new ApiResponse<Role>("error", "Tên quyền đã tồn tại", null);
+                }
                 var newRole = new Role
                 {
                     RoleName = request.Name,
@@ -59,7 +63,12 @@ namespace AuthorizationAPI.Services
                 var existRole = await _roleRepository.GetRoleByIdAsync(id);
                 if (existRole == null)
                 {
-                    return new ApiResponse<Role>("error", "Không tìm thấy người dùng", null);
+                    return new ApiResponse<Role>("error", "Không tìm thấy quyền", null);
+                }
+
+                if (await _roleRepository.AnyAsync(u => u.RoleName == request.Name && u.RoleId != id))
+                {
+                    return new ApiResponse<Role>("error", "Tên quyền đã tồn tại", null);
                 }
 
                 existRole.RoleName = request.Name;

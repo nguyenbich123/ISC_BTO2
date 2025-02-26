@@ -3,6 +3,7 @@ using AuthorizationAPI.Models;
 using AuthorizationAPI.Repositories.IRepo;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace AuthorizationAPI.Repositories
@@ -57,6 +58,10 @@ namespace AuthorizationAPI.Repositories
                 .FirstOrDefaultAsync(u => u.UserName == username);
         }
 
+        public async Task<bool> AnyAsync(Expression<Func<User, bool>> predicate)
+        {
+            return await _context.Users.AnyAsync(predicate);
+        }
 
     }
 }
