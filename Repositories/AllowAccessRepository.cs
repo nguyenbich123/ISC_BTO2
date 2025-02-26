@@ -23,7 +23,8 @@ namespace AuthorizationAPI.Repositories
 
         public async Task<AllowAccess> GetAllowAccessByRoleIdAsync(int roleId, string tableName)
         {
-            return await _context.AllowAccesses.FirstOrDefaultAsync(a => a.RoleId == roleId && a.TableName == tableName);
+            return await _context.AllowAccesses
+                .FirstOrDefaultAsync(a => a.RoleId == roleId && a.TableName == tableName);
         }
 
         public async Task<AllowAccess> GetAllowAccessByIdAsync(int id)

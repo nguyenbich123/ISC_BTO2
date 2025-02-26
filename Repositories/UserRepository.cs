@@ -30,14 +30,14 @@ namespace AuthorizationAPI.Repositories
         {
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
-            return user; // 🔹 Trả về user vừa thêm
+            return user;
         }
 
         public async Task<User> UpdateUserAsync(User user)
         {
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
-            return user; // 🔹 Trả về user vừa cập nhật
+            return user;
         }
 
         public async Task DeleteUserAsync(int id)
@@ -53,7 +53,7 @@ namespace AuthorizationAPI.Repositories
         public async Task<User> GetUserByUsernameAsync(string username)
         {
             return await _context.Users
-                .Include(u => u.Role)  // Nạp Role vào User
+                .Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.UserName == username);
         }
 

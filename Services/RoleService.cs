@@ -19,7 +19,8 @@ namespace AuthorizationAPI.Services
         public async Task<ApiResponse<ICollection<Role>>> GetAllRolesAsync()
         {
             var roles = await _roleRepository.GetAllRolesAsync();
-            return new ApiResponse<ICollection<Role>>("success", "Lấy danh sách phân quyền thành công", roles);
+            return new ApiResponse<ICollection<Role>>
+                ("success", "Lấy danh sách phân quyền thành công", roles);
         }
 
         public async Task<ApiResponse<Role>> GetRoleByIdAsync(int id)

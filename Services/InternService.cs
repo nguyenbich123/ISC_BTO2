@@ -18,7 +18,6 @@ namespace AuthorizationAPI.Services
 
         public async Task<ApiResponse<ICollection<object>>> GetInternsByRoleAsync(int roleId)
         {
-            Console.WriteLine("id nè:" + roleId);
             var intern  = await _internRepository.GetInternsByRoleAsync(roleId);
             return new ApiResponse<ICollection<object>>("success", "Lấy danh sách thực tập sinh thành công", intern);
         }

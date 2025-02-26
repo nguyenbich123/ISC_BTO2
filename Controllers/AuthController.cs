@@ -20,16 +20,13 @@ namespace AuthorizationAPI.Controllers
             _userRepository = userRepository;
         }
 
-        /// <summary>
-        /// Đăng nhập và nhận JWT token
-        /// </summary>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var user = await _userRepository.GetUserByUsernameAsync(request.Username);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
-                return Ok(new ApiResponse<User>("error", "Invalid credentials", null));
+                return Ok(new ApiResponse<User>("error", "Tên đăng nhập hoặc mật khẩu chưa chính xác", null));
             }
 
             var roleName = user.Role?.RoleName ?? "Unknown";
@@ -40,7 +37,7 @@ namespace AuthorizationAPI.Controllers
 
 
             var token = _jwtService.GenerateToken(user.UserId.ToString(), user.Role.RoleName, user.RoleId.ToString());
-            return Ok(new ApiResponse<object>("success", "Login successful", new { token = token, user = user }));
+            return Ok(new ApiResponse<object>("success", "Đăng nhập thành công!!", new { token = token, user = user }));
         }
     }
 }

@@ -25,12 +25,10 @@ namespace AuthorizationAPI.Repositories
 
             if (allowAccess == null || string.IsNullOrEmpty(allowAccess.AccessProperties))
             {
-                Console.WriteLine("🚨 Không có quyền hoặc danh sách cột rỗng!");
-                return new List<object>(); // Không trả về gì nếu không có quyền
+                return new List<object>();
             }
 
             var allowedColumns = new HashSet<string>(allowAccess.AccessProperties.Split(','));
-            Console.WriteLine($"📌 Các cột được phép truy vấn: {string.Join(", ", allowedColumns)}");
 
             var interns = await _context.Interns.ToListAsync();
 
@@ -41,7 +39,7 @@ namespace AuthorizationAPI.Repositories
 
                 foreach (var prop in properties)
                 {
-                    if (allowedColumns.Contains(prop.Name)) // Chỉ lấy cột có quyền
+                    if (allowedColumns.Contains(prop.Name)) 
                     {
                         ((IDictionary<string, object>)dynamicIntern)[prop.Name] = prop.GetValue(i);
                     }
@@ -50,10 +48,7 @@ namespace AuthorizationAPI.Repositories
                 return dynamicIntern;
             }).ToList();
 
-            Console.WriteLine($"📌 Số thực tập sinh trả về: {result.Count}");
             return result;
         }
-
-
     }
 }

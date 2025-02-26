@@ -26,8 +26,8 @@ namespace AuthorizationAPI.Services
             {
         new Claim(JwtRegisteredClaimNames.Sub, userId),
         new Claim(ClaimTypes.Role, role),
-        new Claim("RoleId", roleId), // Thêm RoleId vào token
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Token ID
+        new Claim("RoleId", roleId),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) 
     };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
@@ -37,7 +37,7 @@ namespace AuthorizationAPI.Services
                 issuer: _issuer,
                 audience: _audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(3), // Token hết hạn sau 3 tiếng
+                expires: DateTime.UtcNow.AddHours(24),
                 signingCredentials: credentials
             );
 

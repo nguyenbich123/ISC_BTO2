@@ -17,16 +17,7 @@ namespace AuthorizationAPI.Controllers
             _internService = internService;
         }
 
-        //[HttpGet]
-        //[Authorize]
-        //public async Task<IActionResult> GetInterns()
-        //{
-        //    var roleId = int.Parse(User.FindFirst("RoleId")?.Value ?? "0");
-        //    var response = await _internService.GetInternsByRoleAsync(roleId);
-        //    return response.Status.Equals("success") ? Ok(response) : BadRequest(response);
-
-        //}
-        [Authorize] // Bắt buộc người dùng phải đăng nhập mới gọi API này
+        [Authorize] 
         [HttpGet]
         public async Task<IActionResult> GetInterns()
         {

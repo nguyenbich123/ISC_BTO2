@@ -50,7 +50,7 @@ namespace AuthorizationAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var response = await _userService.DeleteUserAsync(id);

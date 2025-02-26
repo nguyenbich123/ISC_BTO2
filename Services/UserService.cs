@@ -77,7 +77,7 @@ namespace AuthorizationAPI.Services
 
                 if (!string.IsNullOrEmpty(request.Password))
                 {
-                    request.Password = BCrypt.Net.BCrypt.HashPassword(request.Password); // Hash password
+                    request.Password = BCrypt.Net.BCrypt.HashPassword(request.Password); 
                     existUser.UserName = request.UserName;
                 }
 
@@ -92,8 +92,7 @@ namespace AuthorizationAPI.Services
             catch (Exception ex)
             {
                 return new ApiResponse<User>("error", "Lỗi cập nhật người dùng", null);
-            }
-            
+            }  
         }
 
         public async Task<ApiResponse<User>> DeleteUserAsync(int id)
